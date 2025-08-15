@@ -26,14 +26,14 @@ def json_serializer(data):
 # acks='all' - гарантия доставки at least once. Продюсер будет ждать подтверждения от всех реплик.
 # retries=5 - количество повторных попыток отправки в случае ошибки.
 producer = KafkaProducer(
-    bootstrap_servers=['localhost:9092', 'localhost:9093', 'localhost:9094'],
+    bootstrap_servers=['localhost:9092'],
     value_serializer=json_serializer,
     acks='all',
     retries=5
 )
 
 # название топика
-topic_name = 'messages-topic'
+topic_name = 'test_topic'
 
 print("Запуск продюсера...")
 try:
