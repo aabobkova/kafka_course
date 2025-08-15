@@ -1,0 +1,3 @@
+docker exec -it kafka1 kafka-topics --create --topic messages-topic --partitions 3 --replication-factor 2 --bootstrap-server kafka1:29092
+
+docker exec -it kafka1 kafka-topics --describe --topic messages-topic --bootstrap-server kafka1:29092
