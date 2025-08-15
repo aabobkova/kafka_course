@@ -12,9 +12,9 @@ def json_deserializer(data):
 # fetch_min_bytes=100 - минимальный объем данных (в байтах) для получения за один запрос
 # fetch_max_wait_ms=5000 - максимальное время ожидания данных от брокера (в мс)
 consumer_batch = KafkaConsumer(
-    'messages-topic',
+    'test_topic',
     group_id='batch-message-group',
-    bootstrap_servers=['localhost:9092', 'localhost:9093', 'localhost:9094'],
+    bootstrap_servers=['localhost:9092'],
     auto_offset_reset='earliest',
     enable_auto_commit=False,
     fetch_min_bytes=100,
