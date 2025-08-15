@@ -14,9 +14,9 @@ def json_deserializer(data):
 # auto_commit_interval_ms=1000 - интервал автоматического коммита в миллисекунда.
 # value_deserializer - функция для десериализации сообщений
 consumer_single = KafkaConsumer(
-    'messages-topic',
+    'test_topic',
     group_id='single-message-group',
-    bootstrap_servers=['localhost:9092', 'localhost:9093', 'localhost:9094'],
+    bootstrap_servers=['localhost:9092'],
     auto_offset_reset='earliest',
     enable_auto_commit=True,
     auto_commit_interval_ms=1000,
