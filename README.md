@@ -44,7 +44,7 @@ docker-compose ps
 Выполните в терминале команду для создания топика (она есть в файле topic.txt):
 
 bash
-docker exec -it annabobkova-kafka-0-1 kafka-topics.sh --create --topic test_topic --partitions 2 --replication-factor 1  --bootstrap-server annabobkova-kafka-0-1:9092
+docker exec -it kafka-1 kafka-topics.sh --create --topic test_topic_v2 --partitions 3 --replication-factor 2  --bootstrap-server kafka-1:9092
 ### Шаг 4: Запуск приложения
 Для проверки параллельной работы откройте три разных окна терминала.
 
