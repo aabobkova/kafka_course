@@ -1,10 +1,24 @@
 import json
+import logging
+import os
 from kafka import KafkaConsumer
 from kafka.errors import KafkaError
 
+# настройка логирования
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger('SingleMessageConsumerApp')
+
 # функция для десериализации JSON в объект Python
 def json_deserializer(data):
-    return json.loads(data.decode('utf-8'))
+    try:
+        return json.loads(data.decode('utf-8'))
+    except json.JSONDecodeError as e:
+        logger.error(f"Ошибка десериализации JSON: {e} для данных: {data}")
+        return None
+
+bootstrap_servers_str = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
+bootstrap_servers = bootstrap_servers_str.split(',')
 
 # создание консьюмера
 # group_id - уникальный идентификатор группы консьюмеров
@@ -14,34 +28,38 @@ def json_deserializer(data):
 # auto_commit_interval_ms=1000 - интервал автоматического коммита в миллисекунда.
 # value_deserializer - функция для десериализации сообщений
 consumer_single = KafkaConsumer(
-    'test_topic',
+    'messages-topic',
     group_id='single-message-group',
-    bootstrap_servers=['localhost:9092'],
+    bootstrap_servers=bootstrap_servers,
     auto_offset_reset='earliest',
     enable_auto_commit=True,
     auto_commit_interval_ms=1000,
     value_deserializer=json_deserializer
 )
 
-print("Запуск SingleMessageConsumer...")
+logger.info("Запуск SingleMessageConsumer...")
 try:
     for message in consumer_single:
-        try:
-            # Выводим в консоль
-            print(f"SingleConsumer | Получено сообщение: {message.value} "
-                  f"| Топик: {message.topic} "
-                  f"| Партиция: {message.partition} "
-                  f"| Оффсет: {message.offset}")
+        if message.value is None:
+            logger.warning(f"SingleConsumer | Пропущено сообщение из-за ошибки десериализации: {message.value} "
+                           f"| Топик: {message.topic} | Партиция: {message.partition} | Оффсет: {message.offset}")
+            continue
 
-        except json.JSONDecodeError:
-            print(f"SingleConsumer | Ошибка десериализации сообщения: {message.value}")
+        try:
+            message_data = message.value
+            content = message_data.get('content', 'Нет содержимого')
+            logger.info(f"SingleConsumer | Получено сообщение: {message_data} "
+                        f"| Топик: {message.topic} | Партиция: {message.partition} | Оффсет: {message.offset}")
+            logger.info(f"SingleConsumer | Обработка: '{content}'")
+            # time.sleep(0.1)
+            
         except Exception as e:
-            print(f"SingleConsumer | Ошибка при обработке сообщения: {e}")
+            logger.error(f"SingleConsumer | Ошибка при обработке сообщения: {e} для сообщения: {message.value}")
 
 except KafkaError as e:
-    print(f"SingleConsumer | Произошла ошибка Kafka: {e}")
+    logger.error(f"SingleConsumer | Произошла ошибка Kafka: {e}")
 except KeyboardInterrupt:
-    print("SingleConsumer | Остановка...")
+    logger.info("SingleConsumer | Остановка...")
 finally:
     consumer_single.close()
-    print("SingleConsumer | Консьюмер остановлен.")
+    logger.info("SingleConsumer | Консьюмер остановлен.")
