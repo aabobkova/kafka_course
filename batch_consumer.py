@@ -26,7 +26,7 @@ bootstrap_servers = bootstrap_servers_str.split(',')
 # fetch_min_bytes=100 - минимальный объем данных (в байтах) для получения за один запрос
 # fetch_max_wait_ms=5000 - максимальное время ожидания данных от брокера (в мс)
 consumer_batch = KafkaConsumer(
-    'messages-topic',
+    'test_topic_v2',
     group_id='batch-message-group',
     bootstrap_servers=bootstrap_servers,
     auto_offset_reset='earliest',
