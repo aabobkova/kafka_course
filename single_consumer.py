@@ -28,7 +28,7 @@ bootstrap_servers = bootstrap_servers_str.split(',')
 # auto_commit_interval_ms=1000 - интервал автоматического коммита в миллисекунда.
 # value_deserializer - функция для десериализации сообщений
 consumer_single = KafkaConsumer(
-    'messages-topic',
+    'test_topic_v2',
     group_id='single-message-group',
     bootstrap_servers=bootstrap_servers,
     auto_offset_reset='earliest',
